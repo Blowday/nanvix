@@ -24,6 +24,8 @@
 #include <nanvix/pm.h>
 #include <signal.h>
 
+// Sched priority
+
 /**
  * @brief Schedules a process to execution.
  * 
