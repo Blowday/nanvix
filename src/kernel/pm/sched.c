@@ -63,7 +63,9 @@ PUBLIC void resume(struct process *proc)
 
 PUBLIC void decrease_nice(struct process *p)
 {
-    p->nice--;
+    if(p->nice >= -35) {
+      p->nice = p->nice-5;
+    }
 }
 
 

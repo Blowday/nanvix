@@ -271,6 +271,7 @@ static int sched_test1(void)
 	{
 		nice(-2*NZERO);
 		work_cpu();
+    printf("High priority over\n");
 	}
 	
 	/* Child process. */
@@ -278,6 +279,7 @@ static int sched_test1(void)
 	{
 		nice(2*NZERO);
 		work_io();
+    printf("Low priority over\n");
 		_exit(EXIT_SUCCESS);
 	}
 		
