@@ -115,25 +115,7 @@ PUBLIC void yield(void)
 
     if(p != next) {
       decrease_nice(p);
-    }
-		
-		/*
-		 * Process with higher
-		 * waiting time found.
-		 */
-		// if (p->counter > next->counter)
-		// {
-		// 	next->counter++;
-		// 	next = p;
-		// }
-		// 	/*
-		// /*
-		//  * Increment waiting
-		//  * time of process.
-		//  */
-		// else
-		// 	p->counter++;
-    
+    }    
 
   }
 
