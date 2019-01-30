@@ -31,6 +31,9 @@
 #include <signal.h>
 #include <limits.h>
 
+extern void convert(struct process *p);
+extern void modif(struct process *p);
+
 /**
  * @brief Idle process page directory.
  */
@@ -117,10 +120,12 @@ PUBLIC void pm_init(void)
 	IDLE->counter = PROC_QUANTUM;
 	IDLE->priority = PRIO_USER;
 	IDLE->nice = NZERO;
-	IDLE->tickets = 1;
 	IDLE->alarm = 0;
 	IDLE->next = NULL;
 	IDLE->chain = NULL;
+
+  convert(IDLE);
+  modif(IDLE);
 	
 	nprocs++;
 

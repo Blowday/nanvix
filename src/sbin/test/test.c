@@ -195,6 +195,25 @@ static void work_cpu(void)
 	}
 }
 
+static void work_cpu_hard(void)
+{
+	int c;
+	
+	c = 0;
+		
+	/* Perform some computation. */
+	for (int i = 0; i < 10000; i++)
+	{
+		int a = 1 + i;
+		for (int b = 2; b < i; b++)
+		{
+			if ((i%b) == 0)
+				a += b;
+		}
+		c += a;
+	}
+}
+
 /**
  * @brief Performs some dummy IO-intensive computation.
  */
@@ -286,6 +305,74 @@ static int sched_test1(void)
 	return (0);
 }
 
+static int sched_test1dif(void)
+{
+	pid_t pid;
+		
+	pid = fork();
+	
+	/* Failed to fork(). */
+	if (pid < 0)
+		return (-1);
+	
+	/* Parent process. */
+	else if (pid > 0)
+	{
+		nice(-2*NZERO);
+		work_cpu_hard();
+    printf("High priority over\n");
+    fflush(stdout);
+	}
+	
+	/* Child process. */
+	else
+	{
+		nice(2*NZERO);
+		work_cpu_hard();
+    printf("Low priority over\n");
+    fflush(stdout);
+		_exit(EXIT_SUCCESS);
+	}
+		
+	wait(NULL);
+	
+	return (0);
+}
+
+static int sched_test1same(void)
+{
+	pid_t pid;
+		
+	pid = fork();
+	
+	/* Failed to fork(). */
+	if (pid < 0)
+		return (-1);
+	
+	/* Parent process. */
+	else if (pid > 0)
+	{
+		nice(2*NZERO);
+		work_cpu_hard();
+    printf("Low priority 1 over\n");
+    fflush(stdout);
+	}
+	
+	/* Child process. */
+	else
+	{
+		nice(2*NZERO);
+		work_cpu_hard();
+    printf("Low priority 2 over\n");
+    fflush(stdout);
+		_exit(EXIT_SUCCESS);
+	}
+		
+	wait(NULL);
+	
+	return (0);
+}
+
 /**
  * @brief Scheduling test 1.
  * 
@@ -338,6 +425,8 @@ static int sched_test2(void)
 	
 	return (0);
 }
+
+
 
 /**
  * @brief Scheduling test 3.
@@ -645,6 +734,10 @@ int main(int argc, char **argv)
 				(!sched_test0()) ? "PASSED" : "FAILED");
 			printf("  dynamic priorities [%s]\n",
 				(!sched_test1()) ? "PASSED" : "FAILED");
+        printf("  dynamic priorities [%s]\n",
+				(!sched_test1dif()) ? "PASSED" : "FAILED");
+      printf("  same priorities [%s]\n",
+				(!sched_test1same()) ? "PASSED" : "FAILED");
 			printf("  scheduler stress   [%s]\n",
 				(!sched_test2() && !sched_test3()) ? "PASSED" : "FAILED");
 		}
