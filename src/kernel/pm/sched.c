@@ -26,6 +26,8 @@
 
 // Sched priority
 
+#define DEG_PRIO 2
+
 /**
  * @brief Schedules a process to execution.
  * 
@@ -63,11 +65,10 @@ PUBLIC void resume(struct process *proc)
 
 PUBLIC void decrease_nice(struct process *p)
 {
-    if(p->nice >= -35) {
-      p->nice = p->nice-5;
+    if(p->nice >= (-40 + DEG_PRIO)) {
+      p->nice = p->nice-DEG_PRIO;
     }
 }
-
 
 /**
  * @brief Yields the processor.
