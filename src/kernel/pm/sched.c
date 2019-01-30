@@ -154,7 +154,6 @@ PUBLIC void resume(struct process *proc)
  */
 PUBLIC void yield(void)
 {
-	ksrand(257);
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
 	// int found ;
@@ -186,7 +185,7 @@ PUBLIC void yield(void)
 	next = TabTickets[RandomTicket];
 	/* Skip non-ready process. */
 	while (next->state != PROC_READY){
-		RandomTicket = (int)(krand()%(MAXTICKETS-TicketsDispo+1));
+		RandomTicket = (int)(myrand()%(MAXTICKETS-TicketsDispo+1));
 		next = TabTickets[RandomTicket];
 	}
 	
