@@ -25,6 +25,9 @@
 #include <nanvix/pm.h>
 #include <signal.h>
 
+extern void convert(struct process *p);
+extern void modif(struct process *p);
+
 /**
  * @brief Is the system shutting down?
  */
@@ -108,6 +111,8 @@ PUBLIC void die(int status)
 	
 	sndsig(curr_proc->father, SIGCHLD);
 	
+	modif(curr_proc);
+
 	yield();
 }
 

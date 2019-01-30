@@ -117,6 +117,7 @@ PUBLIC void pm_init(void)
 	IDLE->counter = PROC_QUANTUM;
 	IDLE->priority = PRIO_USER;
 	IDLE->nice = NZERO;
+	IDLE->tickets = 1;
 	IDLE->alarm = 0;
 	IDLE->next = NULL;
 	IDLE->chain = NULL;

@@ -22,6 +22,9 @@
 #include <errno.h>
 #include <limits.h>
 
+extern void convert(struct process *p);
+extern void modif(struct process *p);
+
 /*
  * Changes the nice value of the calling process.
  */
@@ -38,7 +41,9 @@ PUBLIC int sys_nice(int incr)
 		curr_proc->nice = 0;
 	else if (curr_proc->nice >= 2*NZERO)
 		curr_proc->nice = 2*NZERO - 1;
+
+	convert(curr_proc);
+	modif(curr_proc);
 	
 	return (curr_proc->nice);
 }
-

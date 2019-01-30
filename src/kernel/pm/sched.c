@@ -23,8 +23,94 @@
 #include <nanvix/hal.h>
 #include <nanvix/pm.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <nanvix/klib.h>
 
-// sched lottery
+unsigned short lfsr = 0xACE1u;
+unsigned bit;
+
+unsigned myrand()
+{
+  bit  = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5) ) & 1;
+  return lfsr =  (lfsr >> 1) | (bit << 15);
+}
+
+#define MAXTICKETS 256
+int TicketsDispo = 256 ;
+struct process *TabTickets[MAXTICKETS];
+
+
+PUBLIC void convert(struct process *p){
+	if (p->nice < -30)
+		p->tickets = 8;
+	else if (p->nice < -20)
+		p->tickets = 7;
+	else if (p->nice < -10)
+		p->tickets = 6;
+	else if (p->nice < 0)
+		p->tickets = 5;
+	else if (p->nice < 10)
+		p->tickets = 4;
+	else if (p->nice < 20)
+		p->tickets = 3;
+	else if (p->nice < 30)
+		p->tickets = 2;
+	else
+		p->tickets = 1;
+}
+
+PUBLIC void modif(struct process *p){
+	if (p->state == PROC_ZOMBIE || p->state == PROC_DEAD || p == NULL){
+		for (int i = 0 ; i<256 ; i++){
+			if (TabTickets[i] == p){
+				TabTickets[i] = NULL;
+			}
+		}
+	}
+	else{
+		int compteur = 0;
+		int i;
+		for (i=0 ; i<256-TicketsDispo ; i++) {
+
+			if (compteur == p->tickets){
+				if (TabTickets[i] == p){
+					TabTickets[i] = NULL ;
+					TicketsDispo++;
+				}
+			}
+			
+			else if (TabTickets[i] == p){
+				compteur++;
+			}
+		}
+
+		if (compteur < p->tickets){
+			while(compteur < p->tickets){
+				i++;
+				TabTickets[i] = p;
+				TicketsDispo--;
+				compteur++;
+			}
+		}
+	}
+
+	/* Order the tab */
+	int j = 0;
+	for (int i = 0 ; i<256 ; i++){
+		if (TabTickets[j] == NULL){
+			if (TabTickets[i] != NULL){
+				TabTickets[j] = TabTickets[i];
+				TabTickets[i] = NULL;
+				j++;
+			}
+		}
+		else{
+			j++;
+		}
+	}
+}
+
+
 
 /**
  * @brief Schedules a process to execution.
@@ -35,6 +121,7 @@ PUBLIC void sched(struct process *proc)
 {
 	proc->state = PROC_READY;
 	proc->counter = 0;
+	modif(proc);
 }
 
 /**
@@ -43,7 +130,8 @@ PUBLIC void sched(struct process *proc)
 PUBLIC void stop(void)
 {
 	curr_proc->state = PROC_STOPPED;
-	sndsig(curr_proc->father, SIGCHLD); 
+	sndsig(curr_proc->father, SIGCHLD);
+	modif(curr_proc);
 	yield();
 }
 
@@ -66,8 +154,10 @@ PUBLIC void resume(struct process *proc)
  */
 PUBLIC void yield(void)
 {
+	ksrand(257);
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
+	// int found ;
 
 	/* Re-schedule process for execution. */
 	if (curr_proc->state == PROC_RUNNING)
@@ -88,30 +178,16 @@ PUBLIC void yield(void)
 			p->alarm = 0, sndsig(p, SIGALRM);
 	}
 
+
 	/* Choose a process to run next. */
 	next = IDLE;
-	for (p = FIRST_PROC; p <= LAST_PROC; p++)
-	{
-		/* Skip non-ready process. */
-		if (p->state != PROC_READY)
-			continue;
-		
-		/*
-		 * Process with higher
-		 * waiting time found.
-		 */
-		if (p->counter > next->counter)
-		{
-			next->counter++;
-			next = p;
-		}
-			
-		/*
-		 * Increment waiting
-		 * time of process.
-		 */
-		else
-			p->counter++;
+
+	int RandomTicket = (int)(myrand()%(MAXTICKETS-TicketsDispo+1));
+	next = TabTickets[RandomTicket];
+	/* Skip non-ready process. */
+	while (next->state != PROC_READY){
+		RandomTicket = (int)(krand()%(MAXTICKETS-TicketsDispo+1));
+		next = TabTickets[RandomTicket];
 	}
 	
 	/* Switch to next process. */

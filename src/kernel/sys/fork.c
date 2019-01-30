@@ -26,6 +26,9 @@
 #include <sys/types.h>
 #include <errno.h>
 
+extern void convert(struct process *p);
+extern void modif(struct process *p);
+
 /*
  * Creates a new process.
  */
@@ -154,6 +157,10 @@ found:
 	proc->alarm = 0;
 	proc->next = NULL;
 	proc->chain = NULL;
+
+	convert(proc);
+	modif(proc);
+
 	sched(proc);
 
 	curr_proc->nchildren++;
