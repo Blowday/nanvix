@@ -31,7 +31,7 @@
 	/* Kernel configuration. */
 	#define MULTIUSER              0 /* Multiuser support?              */
 	#define KERNEL_VERSION     "1.2" /* Kernel version.                 */
-	#define PROC_MAX              64 /* Maximum number of process.      */
+	#define PROC_MAX              32 /* Maximum number of process.      */
 	#define PROC_SIZE_MAX  0x4000000 /* Maximum process size.           */
 	#define RAMDISK_SIZE    0x400000 /* RAM disks size.                 */
 	#define INITRD_SIZE      0x80000 /* Init RAM disk size.             */
