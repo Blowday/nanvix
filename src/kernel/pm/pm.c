@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <limits.h>
+#include <nanvix/sem.h>
 
 /**
  * @brief Idle process page directory.
@@ -122,6 +123,10 @@ PUBLIC void pm_init(void)
 	IDLE->chain = NULL;
 	
 	nprocs++;
+
+  /* Lors de la première création de semaphore, on mets bien toutes les valeurs 
+   * du tableau à NULL*/
+  reset_tab_sem();
 
 	enable_interrupts();
 }

@@ -1,4 +1,5 @@
 #include <nanvix/const.h>
+#include <nanvix/sem.h>
 
 
 
@@ -11,8 +12,10 @@
 // La valeur de retour de la fonction d´epend de cmd. Si c’est GETVAL, la
 // valeur actuelle du s´emaphore est retourn´ee. Dans tous les autres cas
 // d’ach`evement r´eussi, 0 doit ˆetre retourn´e. En cas d’erreur, −1 doit ˆetre
-// retourn´e retourn´e.
+// retourné.
 PUBLIC int sys_semctl(int semid, int cmd, int val) {
-
+  (void)(semid);
+  (void)(cmd);
+  (void)(val);
   return(0);
 }

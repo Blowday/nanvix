@@ -1,4 +1,5 @@
 #include <nanvix/const.h>
+#include <nanvix/sem.h>
 
 
 
@@ -9,6 +10,7 @@
 // positive l’op´eration up ().
 // La fonction retourne 0 en cas de r´eussite, ou −1 en cas d’erreur.
 PUBLIC int sys_semop(int semid, int op) {
-
+  (void)(semid);
+  (void)(op);
   return(0);
 }
