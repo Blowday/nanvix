@@ -39,6 +39,7 @@ PUBLIC int create(int n, unsigned int key) {
   }
 }
 
+
 /* Opération down sur un semaphore (prendre une ressource, -1), peut être bloquante */
 PUBLIC int down(int semid) {
   if(tab_sem[semid].used == 1) {

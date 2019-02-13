@@ -3,6 +3,7 @@
 
 
 
+
 // La fonction semget permet à un processus d’utiliser un sémaphore associé
 // à une clé ( texttt key). Si aucun s´emaphore n’est associé à key,
 // un nouveau sémaphore doit ˆetre créé.

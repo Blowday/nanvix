@@ -4,6 +4,7 @@
 #include <nanvix/pm.h>
 
 
+
 /* Structure du semaphore */
 struct semaphore {
 	int val;

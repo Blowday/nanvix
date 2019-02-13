@@ -5,6 +5,7 @@
 
 
 
+
 // La fonction semctl () permet une s´erie d’op´erations de contrˆole sur le
 // s´emaphore identifi´e par semid. Ces op´erations sont sp´ecifi´ees par cmd
 // et peuvent ˆetre :

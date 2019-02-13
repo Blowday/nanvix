@@ -541,6 +541,7 @@ int semaphore_test3(void)
 	if ((pid = fork()) < 0)
 		return (-1);
 	
+  
 	/* Producer. */
 	else if (pid == 0)
 	{
