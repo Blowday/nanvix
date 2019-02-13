@@ -39,16 +39,70 @@ PUBLIC int create(int n, unsigned int key) {
 }
 
 /* Opération down sur un semaphore (prendre une ressource, -1), peut être bloquante */
-PUBLIC void down(int semid) {
-  (void)(semid);
+PUBLIC int down(int semid) {
+  if(tab_sem[semid].used == 1) {
+    disable_interrupts();
+    tab_sem[semid].val--;
+    while(tab_sem[semid].val < 0) {
+      //tab_sem[semid].wait_list[tab_sem[semid].nb_attente] = curr_proc;
+      tab_sem[semid].nb_attente++;
+      enable_interrupts();
+      sleep(tab_sem[semid].chain, curr_proc->priority);
+      disable_interrupts();
+      tab_sem[semid].nb_attente--;
+    }
+    enable_interrupts();
+    return 0;
+  }
+  return -1;
 }
 
 /* Opération up sur un semaphore (rendre une ressource, +1) */
-PUBLIC void up(int semid) {
-(void)(semid);
+PUBLIC int up(int semid) {
+  if(tab_sem[semid].used == 1) {
+    disable_interrupts();
+    tab_sem[semid].val++;
+    if(tab_sem[semid].nb_attente>0 && tab_sem[semid].val>0) {
+      //réveiller des process en attente
+      wakeup(tab_sem[semid].chain);
+    }
+    enable_interrupts();
+    return 0;
+  }
+  return -1;
 }
 
 /* Detruire un semaphore */
-PUBLIC void destroy(int semid) {
-  tab_sem[semid].used = 0;
+PUBLIC int destroy(int semid) {
+  if(tab_sem[semid].used == 1) {
+    tab_sem[semid].used = 0;
+    return 0;
+  }
+  return -1;
+  
+}
+/* Renvoie le semid associé a une key, le crée si non existant, -1 si erreur */
+PUBLIC int getID(unsigned int key) {
+  for(int i=0; i<PROC_MAX; i++) {
+    if(tab_sem[i].key == key) {
+      return i;
+    }
+    return create(0,key);
+  }
+  return -1;
+}
+
+PUBLIC int getVal(int semid) {
+  if(tab_sem[semid].used == 1) {
+    return tab_sem[semid].val;
+  }
+  return -1;
+}
+
+PUBLIC int setVal(int semid, int val) {
+  if(tab_sem[semid].used == 1) {
+    tab_sem[semid].val = val;
+    return 0;
+  }
+  return -1;
 }

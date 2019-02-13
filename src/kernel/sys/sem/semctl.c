@@ -1,5 +1,6 @@
 #include <nanvix/const.h>
 #include <nanvix/sem.h>
+#include <sys/sem.h>
 
 
 
@@ -14,8 +15,12 @@
 // d’ach`evement r´eussi, 0 doit ˆetre retourn´e. En cas d’erreur, −1 doit ˆetre
 // retourné.
 PUBLIC int sys_semctl(int semid, int cmd, int val) {
-  (void)(semid);
-  (void)(cmd);
-  (void)(val);
-  return(0);
+  if(cmd == GETVAL) {
+    return getVal(semid);
+  }else if(cmd == SETVAL) {
+    return setVal(semid, val);
+  }else if(cmd == IPC_RMID) {
+    return destroy(semid);
+  }
+  return -1;
 }

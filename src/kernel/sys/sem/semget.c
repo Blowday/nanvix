@@ -9,6 +9,5 @@
 // En cas de réussite, la fonction retournera l’identificateur du s´emaphore
 // associé à la clée. En cas d’erreur, −1 doit etre retourné.
 PUBLIC int sys_semget(unsigned key) {
-  (void)(key);
-  return(0);
+  return getID(key);
 }

@@ -6,19 +6,24 @@
 
 /* Structure du semaphore */
 struct semaphore {
-	unsigned int val;
+	int val;
   unsigned int key;
   unsigned int nb_attente;
   int used;
-	struct process*	wait_list[PROC_MAX];  //TABLEAU DES PROCESSUS EN ATTENTE
+	struct process**	chain;  //TABLEAU DES PROCESSUS EN ATTENTE
 };
 
 EXTERN void reset_tab_sem();
 
 EXTERN int create(int n, unsigned int key);
-EXTERN void down(struct process* sem);
-EXTERN void up(struct semaphore* sem);
-EXTERN void destroy(struct semaphore* sem);
+EXTERN int down(int semid);
+EXTERN int up(int semid);
+EXTERN int destroy(int semid);
+
+EXTERN int getID(unsigned int key);
+
+EXTERN int getVal(int semid);
+EXTERN int setVal(int semid, int val);
 
 
 #endif /* NANVIX_PM_H_ */
