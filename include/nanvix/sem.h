@@ -10,7 +10,7 @@ struct semaphore {
   unsigned int key;
   unsigned int nb_attente;
   int used;
-	struct process**	chain;  //TABLEAU DES PROCESSUS EN ATTENTE
+	struct process*	chain;  //TABLEAU DES PROCESSUS EN ATTENTE
 };
 
 EXTERN void reset_tab_sem();

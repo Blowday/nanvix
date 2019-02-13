@@ -33,6 +33,7 @@ PUBLIC int create(int n, unsigned int key) {
     tab_sem[i].nb_attente = 0;
     tab_sem[i].used = 1;
     tab_sem[i].key = key;
+    tab_sem[i].chain = NULL;
     nb_sem++;
     return i; // On renvoi cet index (semid)
   }
@@ -41,17 +42,13 @@ PUBLIC int create(int n, unsigned int key) {
 /* Opération down sur un semaphore (prendre une ressource, -1), peut être bloquante */
 PUBLIC int down(int semid) {
   if(tab_sem[semid].used == 1) {
-    disable_interrupts();
     tab_sem[semid].val--;
+    tab_sem[semid].nb_attente++;
     while(tab_sem[semid].val < 0) {
-      //tab_sem[semid].wait_list[tab_sem[semid].nb_attente] = curr_proc;
-      tab_sem[semid].nb_attente++;
-      enable_interrupts();
-      sleep(tab_sem[semid].chain, curr_proc->priority);
-      disable_interrupts();
-      tab_sem[semid].nb_attente--;
+      // on s'endort en attendant de se faire reveiller
+      sleep(&tab_sem[semid].chain, curr_proc->priority);
     }
-    enable_interrupts();
+    tab_sem[semid].nb_attente--;
     return 0;
   }
   return -1;
@@ -60,13 +57,11 @@ PUBLIC int down(int semid) {
 /* Opération up sur un semaphore (rendre une ressource, +1) */
 PUBLIC int up(int semid) {
   if(tab_sem[semid].used == 1) {
-    disable_interrupts();
     tab_sem[semid].val++;
-    if(tab_sem[semid].nb_attente>0 && tab_sem[semid].val>0) {
+    if(tab_sem[semid].nb_attente>0 && tab_sem[semid].val>=0) {
       //réveiller des process en attente
-      wakeup(tab_sem[semid].chain);
+      wakeup(&tab_sem[semid].chain);
     }
-    enable_interrupts();
     return 0;
   }
   return -1;

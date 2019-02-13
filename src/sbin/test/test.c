@@ -565,18 +565,13 @@ int semaphore_test3(void)
 		
 		do
 		{
-      printf("test 1 \n");
 			SEM_DOWN(full);
-      printf("test 2 \n");
 			SEM_DOWN(mutex);
-      printf("test 3 \n");
 			
 			GET_ITEM(buffer_fd, item);
 				
 			SEM_UP(mutex);
-      printf("test 4 \n");
 			SEM_UP(empty);
-      printf("test 5 \n");
 		} while (item != (NR_ITEMS - 1));
 	}
 					

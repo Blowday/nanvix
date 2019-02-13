@@ -1,6 +1,7 @@
 #include <nanvix/const.h>
 #include <nanvix/sem.h>
 #include <sys/sem.h>
+#include <errno.h>
 
 
 
@@ -22,5 +23,5 @@ PUBLIC int sys_semctl(int semid, int cmd, int val) {
   }else if(cmd == IPC_RMID) {
     return destroy(semid);
   }
-  return -1;
+  return -EINVAL;
 }
