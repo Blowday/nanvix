@@ -16,6 +16,7 @@
 // d’ach`evement r´eussi, 0 doit ˆetre retourn´e. En cas d’erreur, −1 doit ˆetre
 // retourné.
 PUBLIC int sys_semctl(int semid, int cmd, int val) {
+  //comment tester val ?
   if(cmd == GETVAL) {
     return getVal(semid);
   }else if(cmd == SETVAL) {
