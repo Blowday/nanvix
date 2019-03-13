@@ -300,6 +300,7 @@ PRIVATE int allocf(void) // appelée a chaque fois si le systeme veut allouer un
 	
 	/* Search for a free frame. */
 	oldest = -1;
+  int  firstOldest = -1;
 	for (i = 0; i < NR_FRAMES; i++)
 	{
 		/* Found it. */
@@ -319,12 +320,18 @@ PRIVATE int allocf(void) // appelée a chaque fois si le systeme veut allouer un
         if(pg->accessed == 0) {
           oldest = i;
         }else {
+          if(firstOldest == -1) {
+            firstOldest = i;
+          }
           pg->accessed = 0;
         }
       }
 				
 		}
 	}
+
+  if (oldest < 0)
+		oldest = firstOldest;
 	
 	/* No frame left. */
 	if (oldest < 0)
