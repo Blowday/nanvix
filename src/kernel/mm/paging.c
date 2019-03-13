@@ -298,7 +298,7 @@ PRIVATE int allocf(void) // appelée a chaque fois si le systeme veut allouer un
 	
 	#define OLDEST(x, y) (frames[x].age < frames[y].age)
 	
-	/* Search for a free frame. */
+	/* Search for a free frame.  */
 	oldest = -1;
   int  firstOldest = -1;
 	for (i = 0; i < NR_FRAMES; i++)
