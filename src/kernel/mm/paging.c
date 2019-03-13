@@ -278,9 +278,9 @@ PUBLIC void putkpg(void *kpg)
  */
 PRIVATE struct
 {
-	unsigned count; /**< Reference count.     */
+	unsigned count; /**< Reference count.     */ // combien de references(pointeurs) pour cette pages
 	unsigned age;   /**< Age.                 */
-	pid_t owner;    /**< Page owner.          */
+	pid_t owner;    /**< Page owner.          */ 
 	addr_t addr;    /**< Address of the page. */
 } frames[NR_FRAMES] = {{0, 0, 0, 0},  };
 
@@ -290,7 +290,8 @@ PRIVATE struct
  * @returns Upon success, the number of the frame is returned. Upon failure, a
  *          negative number is returned instead.
  */
-PRIVATE int allocf(void)
+PRIVATE int allocf(void) // appelée a chaque fois si le systeme veut allouer une page
+// si vide il prend, sinon une page a remplacer
 {
 	int i;      /* Loop index.  */
 	int oldest; /* Oldest page. */
@@ -310,11 +311,18 @@ PRIVATE int allocf(void)
 		{
 			/* Skip shared pages. */
 			if (frames[i].count > 1)
-				continue;
+				continue; //passe au tour de loop suivant
 			
 			/* Oldest page found. */
-			if ((oldest < 0) || (OLDEST(i, oldest)))
-				oldest = i;
+			if ((oldest < 0) || (OLDEST(i, oldest))) {
+        struct pte *pg = getpte(curr_proc, frames[i].addr);
+        if(pg->accessed == 0) {
+          oldest = i;
+        }else {
+          pg->accessed = 0;
+        }
+      }
+				
 		}
 	}
 	
