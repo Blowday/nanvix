@@ -294,6 +294,10 @@ PRIVATE int allocf(void)
 {
 	int i;      /* Loop index.  */
 	int oldest; /* Oldest page. */
+  int class0 = -1;
+  int class1 = -1;
+  int class2 = -1;
+  int class3 = -1;
 	
 	#define OLDEST(x, y) (frames[x].age < frames[y].age)
 	
@@ -312,11 +316,30 @@ PRIVATE int allocf(void)
 			if (frames[i].count > 1)
 				continue;
 			
-			/* Oldest page found. */
-			if ((oldest < 0) || (OLDEST(i, oldest)))
-				oldest = i;
+			/* NRU */
+      struct pte *pg = getpte(curr_proc, frames[i].addr);
+
+      if((pg->accessed == 0) && (pg->dirty == 0) && (class0 < 0)) {
+        class0 = i;
+      }else if((pg->accessed == 0) && (pg->dirty == 1) && (class1 < 0)) {
+        class1 = i;
+      }else if((pg->accessed == 1) && (pg->dirty == 0) && (class2 < 0)) {
+        class2 = i;
+      }else if((pg->accessed == 1) && (pg->dirty == 1) && (class3 < 0)) {
+        class3 = i;
+      }
 		}
 	}
+
+  if(class0 > -1) {
+    oldest = class0;
+  }else if(class1 > -1) {
+    oldest = class1;
+  }else if(class2 > -1) {
+    oldest = class2;
+  }else if(class3 > -1) {
+    oldest = class3;
+  }
 	
 	/* No frame left. */
 	if (oldest < 0)
