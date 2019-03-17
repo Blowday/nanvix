@@ -40,8 +40,10 @@ PRIVATE void do_clock()
 		curr_proc->ktime++;
 		return;
 	}
-
-  resetAccessed();
+  
+  if(ticks%30 == 0) {
+    resetAccessed();
+  }
 	
 	curr_proc->utime++;
 		
