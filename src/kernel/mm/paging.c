@@ -27,6 +27,7 @@
 #include <nanvix/mm.h>
 #include <nanvix/region.h>
 #include <signal.h>
+#include <stdio.h>
 #include "mm.h"
 
 /*
@@ -329,16 +330,22 @@ PRIVATE int allocf(void)
         class3 = i;
       }
 		}
+
+
 	}
 
   if(class0 > -1) {
     oldest = class0;
+    //printf("class0 found\n");
   }else if(class1 > -1) {
     oldest = class1;
+    //printf("class1 found\n");
   }else if(class2 > -1) {
     oldest = class2;
+    //printf("class2 found\n");
   }else if(class3 > -1) {
     oldest = class3;
+    //printf("class3 found\n");
   }
 	
 	/* No frame left. */
@@ -355,6 +362,14 @@ found:
 	frames[i].count = 1;
 	
 	return (i);
+}
+
+EXTERN void resetAccessed() {
+  int i=0;
+  for (i = 0; i < NR_FRAMES; i++) {
+    struct pte *pg = getpte(curr_proc, frames[i].addr);
+    pg->accessed = 0;
+  }
 }
 
 /**

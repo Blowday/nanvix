@@ -35,7 +35,7 @@
 #define VERBOSE  (1 << 2)
 
 /* Test flags. */
-static unsigned flags = VERBOSE;
+static unsigned flags = VERBOSE | FULL;
 
 /*============================================================================*
  *                               swap_test                                    *
@@ -51,7 +51,7 @@ static unsigned flags = VERBOSE;
  */
 static int swap_test(void)
 {
-	#define N 1280
+	#define N 600
 	int *a, *b, *c;
 	clock_t t0, t1;
 	struct tms timing;
@@ -72,18 +72,23 @@ static int swap_test(void)
 		a[i] = 1;
 		b[i] = 1;
 		c[i] = 0;
+    //printf("matrice initialized\n");
 	}
 	
 	/* Multiply matrices. */
 	if (flags & (EXTENDED | FULL))
 	{	
+    printf("calcul de matrices\n");
 		for (int i = 0; i < N; i++)
 		{
+      printf("ligne %d\n",i);
 			for (int j = 0; j < N; j++)
 			{
 					
-				for (int k = 0; k < N; k++)
+				for (int k = 0; k < N; k++){
+          
 					c[i*N + j] += a[i*N + k]*b[k*N + j];
+        }
 			}
 		}
 	}
@@ -91,6 +96,7 @@ static int swap_test(void)
 	/* Check values. */
 	if (flags & FULL)
 	{
+    printf("check\n");
 		for (int i = 0; i < N*N; i++)
 		{
 			if (c[i] != N)

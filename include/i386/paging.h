@@ -80,6 +80,8 @@
 	 */
 	#define PGTAB(a) ((unsigned)(a) >> PGTAB_SHIFT)
 
+  EXTERN void resetAccessed();
+
 #endif /* _ASM_FILE_ */
 
 #endif /* I386_PAGING_H_ */
