@@ -60,6 +60,19 @@
 	(&((struct pte *)((getpde(p, a)->frame << PAGE_SHIFT) + KBASE_VIRT))[PG(a)])
 
 
+#define isclass0(a,d) \
+  ((a == 0) && (d == 0))
+
+#define isclass1(a,d) \
+  ((a == 0) && (d == 1))
+
+#define isclass2(a,d) \
+  ((a == 1) && (d == 0))
+
+#define isclass3(a,d) \
+  ((a == 1) && (d == 1))
+
+
 /*============================================================================*
  *                             Swapping System                                *
  *============================================================================*/
@@ -320,17 +333,16 @@ PRIVATE int allocf(void)
 			/* NRU */
       struct pte *pg = getpte(curr_proc, frames[i].addr);
 
-      if((pg->accessed == 0) && (pg->dirty == 0) && (class0 < 0)) {
+      if((class0 < 0) && (isclass0(pg->accessed,pg->dirty))) {
         class0 = i;
-      }else if((pg->accessed == 0) && (pg->dirty == 1) && (class1 < 0)) {
+      }else if((class1 < 0) && (isclass1(pg->accessed,pg->dirty))) {
         class1 = i;
-      }else if((pg->accessed == 1) && (pg->dirty == 0) && (class2 < 0)) {
+      }else if((class2 < 0) && (isclass2(pg->accessed,pg->dirty))) {
         class2 = i;
-      }else if((pg->accessed == 1) && (pg->dirty == 1) && (class3 < 0)) {
+      }else if((class3 < 0) && (isclass3(pg->accessed,pg->dirty))) {
         class3 = i;
       }
 		}
-
 
 	}
 
