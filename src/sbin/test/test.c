@@ -72,18 +72,23 @@ static int swap_test(void)
 		a[i] = 1;
 		b[i] = 1;
 		c[i] = 0;
+    //printf("matrice initialized\n");
 	}
 	
 	/* Multiply matrices. */
 	if (flags & (EXTENDED | FULL))
 	{	
+    printf("calcul de matrices\n");
 		for (int i = 0; i < N; i++)
 		{
+      printf("ligne %d\n",i);
 			for (int j = 0; j < N; j++)
 			{
 					
-				for (int k = 0; k < N; k++)
+				for (int k = 0; k < N; k++){
+          
 					c[i*N + j] += a[i*N + k]*b[k*N + j];
+        }
 			}
 		}
 	}
@@ -91,6 +96,7 @@ static int swap_test(void)
 	/* Check values. */
 	if (flags & FULL)
 	{
+    printf("check\n");
 		for (int i = 0; i < N*N; i++)
 		{
 			if (c[i] != N)
