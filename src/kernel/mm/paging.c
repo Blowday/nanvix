@@ -284,6 +284,17 @@ PRIVATE struct
 	addr_t addr;    /**< Address of the page. */
 } frames[NR_FRAMES] = {{0, 0, 0, 0},  };
 
+
+
+EXPORT 
+
+
+
+
+
+
+
+
 /**
  * @brief Allocates a page frame.
  * 

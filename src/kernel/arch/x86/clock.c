@@ -40,6 +40,8 @@ PRIVATE void do_clock()
 		curr_proc->ktime++;
 		return;
 	}
+
+  
 	
 	curr_proc->utime++;
 		
