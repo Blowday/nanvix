@@ -41,7 +41,7 @@ PRIVATE void do_clock()
 		return;
 	}
 
-  if(ticks%40 == 0) {
+  if(ticks%100 == 0) {
     updateCounter();
   }
   

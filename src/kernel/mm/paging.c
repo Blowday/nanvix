@@ -280,13 +280,23 @@ PRIVATE struct
 {
 	unsigned count; /**< Reference count.     */
 	unsigned age;   /**< Age.                 */
+  unsigned char counter;   /**< Counter for NFU      */
 	pid_t owner;    /**< Page owner.          */
 	addr_t addr;    /**< Address of the page. */
-} frames[NR_FRAMES] = {{0, 0, 0, 0},  };
+} frames[NR_FRAMES] = {{0, 0, 0, 0, 0},  };
 
 
 EXTERN void updateCounter() {
-  struct pte *pg = getpte(curr_proc, frames[i].addr);
+  int i;
+  for (i = 0; i < NR_FRAMES; i++) {
+    struct pte *pg = getpte(curr_proc, frames[i].addr);
+    if(pg->accessed == 1) {
+      frames[i].counter = (frames[i].counter >> 1) | 128;
+    }else {
+      frames[i].counter = frames[i].counter >> 1;
+    }
+    pg->accessed = 0;
+  }
 }
 
 /**
@@ -298,12 +308,12 @@ EXTERN void updateCounter() {
 PRIVATE int allocf(void)
 {
 	int i;      /* Loop index.  */
-	int oldest; /* Oldest page. */
+	int lowest; /* Lowest counter page. */
 	
-	#define OLDEST(x, y) (frames[x].age < frames[y].age)
+	#define LOWEST(x, y) (frames[x].counter < frames[y].counter)
 	
 	/* Search for a free frame. */
-	oldest = -1;
+	lowest = -1;
 	for (i = 0; i < NR_FRAMES; i++)
 	{
 		/* Found it. */
@@ -317,22 +327,23 @@ PRIVATE int allocf(void)
 			if (frames[i].count > 1)
 				continue;
 			
-			/* Oldest page found. */
-			if ((oldest < 0) || (OLDEST(i, oldest)))
-				oldest = i;
+			/* Lowest counter page found. */
+			if ((lowest < 0) || (LOWEST(i, lowest)))
+				lowest = i;
 		}
 	}
 	
 	/* No frame left. */
-	if (oldest < 0)
+	if (lowest < 0)
 		return (-1);
 	
 	/* Swap page out. */
-	if (swap_out(curr_proc, frames[i = oldest].addr))
+	if (swap_out(curr_proc, frames[i = lowest].addr))
 		return (-1);
 	
 found:		
 
+  frames[i].counter = 0;
 	frames[i].age = ticks;
 	frames[i].count = 1;
 	
