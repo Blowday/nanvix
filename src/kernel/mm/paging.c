@@ -285,9 +285,8 @@ PRIVATE struct
 } frames[NR_FRAMES] = {{0, 0, 0, 0},  };
 
 
-
 EXTERN void updateCounter() {
-  
+  struct pte *pg = getpte(curr_proc, frames[i].addr);
 }
 
 /**
