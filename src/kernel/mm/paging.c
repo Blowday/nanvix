@@ -285,6 +285,15 @@ PRIVATE struct
 	addr_t addr;    /**< Address of the page. */
 } frames[NR_FRAMES] = {{0, 0, 0, 0, 0},  };
 
+unsigned short lfsr = 0xACE1u;
+unsigned bit;
+
+unsigned myrand()
+{
+  bit  = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5) ) & 1;
+  return lfsr =  (lfsr >> 1) | (bit << 15);
+}
+
 
 EXTERN void updateCounter() {
   int i;
@@ -310,7 +319,7 @@ PRIVATE int allocf(void)
 	int i;      /* Loop index.  */
 	int lowest; /* Lowest counter page. */
 	
-	#define LOWEST(x, y) (frames[x].counter < frames[y].counter)
+	#define LOWEST(x, y) (frames[x].counter <= frames[y].counter)
 	
 	/* Search for a free frame. */
 	lowest = -1;
@@ -328,8 +337,9 @@ PRIVATE int allocf(void)
 				continue;
 			
 			/* Lowest counter page found. */
-			if ((lowest < 0) || (LOWEST(i, lowest)))
-				lowest = i;
+			if ((lowest < 0) || (LOWEST(i, lowest))){
+        lowest = i;	
+      }  			
 		}
 	}
 	
@@ -343,7 +353,9 @@ PRIVATE int allocf(void)
 	
 found:		
 
-  frames[i].counter = 0;
+  /* The new page has been accessed, we MUST count it. 
+     Otherwise the page will be immediatly thrown away */
+  frames[i].counter = 128;  
 	frames[i].age = ticks;
 	frames[i].count = 1;
 	

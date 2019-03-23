@@ -72,7 +72,6 @@ static int swap_test(void)
 		a[i] = 1;
 		b[i] = 1;
 		c[i] = 0;
-    //printf("matrice initialized\n");
 	}
 	
 	/* Multiply matrices. */
