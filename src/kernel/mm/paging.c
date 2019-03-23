@@ -286,14 +286,9 @@ PRIVATE struct
 
 
 
-EXPORT 
-
-
-
-
-
-
-
+EXTERN void updateCounter() {
+  
+}
 
 /**
  * @brief Allocates a page frame.
