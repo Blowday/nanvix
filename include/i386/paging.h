@@ -80,7 +80,7 @@
 	 */
 	#define PGTAB(a) ((unsigned)(a) >> PGTAB_SHIFT)
 
-  EXTERN void updateCounter();
+  extern void updateCounter();
 
 #endif /* _ASM_FILE_ */
 
