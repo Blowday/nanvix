@@ -25,11 +25,16 @@
 #include <signal.h>
 
 /**
+ * PROCESSUS SONT DANS UNE LISTE CHAINEE. On choppe FIRST_PROC puis on fait next.
+ * 
+ */
+
+/**
  * @brief Schedules a process to execution.
  * 
  * @param proc Process to be scheduled.
  */
-PUBLIC void sched(struct process *proc)
+PUBLIC void sched(struct process *proc) // met ou remet un processus ready dans la file.
 {
 	proc->state = PROC_READY;
 	proc->counter = 0;
@@ -67,7 +72,7 @@ PUBLIC void yield(void)
 	struct process *p;    /* Working process.     */
 	struct process *next; /* Next process to run. */
 
-	/* Re-schedule process for execution. */
+	/* Re-schedule process for execution. */ //Si le processus n'avait pas fini, on le reschedule
 	if (curr_proc->state == PROC_RUNNING)
 		sched(curr_proc);
 
